@@ -13,5 +13,6 @@ UCLASS()
 class SHOOTINGRANGE_API AShootingRangeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+	virtual void StartPlay() override;
 };
