@@ -2,13 +2,29 @@
 
 
 #include "CPP_Weapon_Base.h"
+#include "Engine/World.h"
+#include "Components/AudioComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 ACPP_Weapon_Base::ACPP_Weapon_Base()
-	: MagazineSize(0)
-	, MagazineNum(0)
-	, MaxAmmo(0)
-	, CurrentAmmo(0)
+	: MagazineSize	(0)
+	, MagazineNum	(0)
+	, MaxAmmo		(0)
+	, CurrentAmmo	(MagazineSize)
+
+	, BulletDistance(10000.0f)
+
+	, FireSound	(nullptr)
+	, HitEffect	(nullptr)
+	, HitSound	(nullptr)
+
+	, ShowDebugLine	(EShowDebugLine::Enabled)
+	, Duration		(1.0)
+	, Thickness		(1.0f)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -31,10 +47,82 @@ void ACPP_Weapon_Base::Tick(float DeltaTime)
 
 void ACPP_Weapon_Base::Reload()
 {
-
+	// 弾を消費していたら
+	if (CurrentAmmo != MagazineSize)
+	{
+		int32 TempCurrentAmmo = CurrentAmmo;
+		
+		// マガジン補充
+		CurrentAmmo = MagazineSize > (CurrentAmmo + MaxAmmo) ? (CurrentAmmo + MaxAmmo) : MagazineSize;
+		
+		// 予備弾数
+		MaxAmmo = 0 >= (MaxAmmo - (MagazineSize - TempCurrentAmmo)) ? 0 : (MaxAmmo - (MagazineSize - TempCurrentAmmo));
+	}
+	else
+	{
+		return;
+	}
 }
 
-void ACPP_Weapon_Base::Fire()
+void ACPP_Weapon_Base::Fire_Implementation()
 {
+	// 弾の減少
+	if (CurrentAmmo > 0)
+	{
+		CurrentAmmo--;
+	}
+	else
+	{
+		return;
+	}
 
+	// 発砲音再生
+	if (FireSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
+	}
+
+	// デバッグラインの描画
+	if (ShowDebugLine == EShowDebugLine::Enabled)
+	{
+		StartLocation = GetActorLocation() + GetActorScale().Y;
+		EndLocation	= StartLocation + (GetActorLocation() * BulletDistance);
+		LineColor = FLinearColor(255.0, 0.0, 0.0, 0.0);
+
+		UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, Duration, Thickness);
+	}
+
+	// ライントレース
+	{
+		FCollisionQueryParams CollisionQueryParams;
+		
+		CollisionQueryParams.bFindInitialOverlaps = false;
+		CollisionQueryParams.AddIgnoredActor(this);
+
+		GetWorld()->LineTraceSingleByChannel(FireHitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, CollisionQueryParams);
+
+		// ヒット処理
+		if (FireHitResult.bBlockingHit && HitEffect && HitSound)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, EndLocation);
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, EndLocation);
+		}
+	}
 }
+
+/*--- エディタ上でのプロパティ変更を反映させる ---*/
+void ACPP_Weapon_Base::CalculateMaxAmmo()
+{
+	MaxAmmo = MagazineSize * MagazineNum;
+}
+
+#if WITH_EDITER
+void ACPP_Weapon_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	CalculateMaxAmmo();
+}
+#endif // WITH_EDITER
+
+/* ------------------------------------------ */

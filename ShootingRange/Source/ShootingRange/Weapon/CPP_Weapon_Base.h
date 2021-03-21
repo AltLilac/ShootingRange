@@ -19,27 +19,84 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// 弾倉のサイズ
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	int32 MagazineSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// 弾倉の数
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	int32 MagazineNum;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	// 最大弾数
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "WeaponInfo")
 	int32 MaxAmmo;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	// 現在の弾倉内の弾数
 	int32 CurrentAmmo;
 
+	// 射程距離
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
+	float BulletDistance;
+
+	// 発砲音
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
+	UAudioComponent* FireSound;
+
+	// デバッグライン
+	UENUM(BlueprintType)
+	enum class EShowDebugLine : uint8
+	{
+		Enabled,
+		Disabled
+	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
+	EShowDebugLine ShowDebugLine;
+
+	// デバッグラインの色
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
+	FLinearColor LineColor;
+
+	// デバッグラインの継続時間
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
+	float Duration;
+
+	// デバッグラインの厚さ
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
+	float Thickness;
+
+	// デバッグラインの開始座標
+	FVector StartLocation;
+
+	// デバッグラインの終了座標
+	FVector EndLocation;
+
+	// ヒットしたオブジェクト
+	FHitResult FireHitResult;
+
+	// ヒットパーティクル
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particles")
+	UParticleSystemComponent* HitEffect;
+
+	// ヒット音
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
+	UAudioComponent* HitSound;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void Reload();
 
-	UFUNCTION()
-	virtual void Fire();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponBase")
+	void Fire();
+	virtual void Fire_Implementation();
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void CalculateMaxAmmo();
+	
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// インターフェースを C++ ベースクラスである程度定義すべきか？
 	/*
