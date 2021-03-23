@@ -22,7 +22,7 @@ class SHOOTINGRANGE_API ICPP_Attach
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// �A�^�b�`�C�x���g
+	// アイテムを手の空ソケットにアタッチ
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void AttachItemToHand();
 	virtual void AttachItemToHand_Implementetion();

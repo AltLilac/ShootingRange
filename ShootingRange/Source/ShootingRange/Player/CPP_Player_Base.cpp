@@ -10,34 +10,34 @@ ACPP_Player_Base::ACPP_Player_Base()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// ˆêlÌƒJƒƒ‰ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğì¬
+	// ä¸€äººç§°ã‚«ãƒ¡ãƒ©ã®ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 	FPSCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	check(FPSCameraComponent != nullptr);
 
-	// ƒJƒƒ‰ƒRƒ“ƒ|[ƒlƒ“ƒg‚ğƒAƒ^ƒbƒ`
+	// ä¸€äººç§°ã‚«ãƒ¡ãƒ©ã‚’ã‚¢ã‚¿ãƒƒãƒ
 	FPSCameraComponent->SetupAttachment(CastChecked<USceneComponent, UCapsuleComponent>(GetCapsuleComponent()));
 
-	// ƒJƒƒ‰‚ğƒLƒƒƒ‰ƒNƒ^[‚Ì–Ú‚Ì­‚µã‚É”z’u
+	// ä¸€äººç§°ã‚«ãƒ¡ãƒ©ã®ç›¸å¯¾åº§æ¨™
 	FPSCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f + BaseEyeHeight));
 
-	// ƒ|[ƒ“‚ÅƒJƒƒ‰‚Ì‰ñ“]‚ğƒRƒ“ƒgƒ[ƒ‹‚Å‚«‚é‚æ‚¤‚É‚·‚é
+	// è‡ªèº«ãŒå›è»¢ã‚’åˆ¶å¾¡
 	FPSCameraComponent->bUsePawnControlRotation = true;
 
-	// ˆêlÌƒƒbƒVƒ…i˜rj‚ğì¬
+	// ä¸€äººç§°ãƒ¡ãƒƒã‚·ãƒ¥ã®ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 	FPSMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FirstPersonMesh"));
 	check(FPSMesh != nullptr);
 
-	// ©g‚É‚µ‚©Œ©‚¦‚È‚¢‚æ‚¤‚Éİ’è
+	// ä¸€äººç§°ãƒ¡ãƒƒã‚·ãƒ¥ã‚’è‡ªèº«ã«ã®ã¿è¦‹ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹
 	FPSMesh->SetOnlyOwnerSee(true);
 
-	// ˆêlÌƒJƒƒ‰‚ÉƒAƒ^ƒbƒ`
+	// ä¸€äººç§°ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ä¸€äººç§°ã‚«ãƒ¡ãƒ©ã«ã‚¢ã‚¿ãƒƒãƒ
 	FPSMesh->SetupAttachment(FPSCameraComponent);
 
-	// ˆêlÌƒLƒƒƒ‰ƒNƒ^[‚ª’Pˆê‚ÌƒƒbƒVƒ…‚ÉŒ©‚¦‚é‚æ‚¤A˜r‚ÌƒƒbƒVƒ…‚Ì‰e‚ğˆê•”–³Œø‰»
+	// ä¸€éƒ¨å½±ã‚’ç„¡åŠ¹åŒ–
 	FPSMesh->bCastDynamicShadow = false;
 	FPSMesh->CastShadow = false;
 
-	// ‘SgƒƒbƒVƒ…‚ğ©g‚©‚çŒ©‚¦‚È‚¢‚æ‚¤‚É‚·‚é
+	// å…¨ä½“ãƒ¡ãƒƒã‚·ãƒ¥ã‚’è‡ªèº«ã‹ã‚‰è¦‹ãˆãªã„ã‚ˆã†ã«ã™ã‚‹
 	GetMesh()->SetOwnerNoSee(true);
 }
 
@@ -63,40 +63,36 @@ void ACPP_Player_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// ˆÚ“®‚ÌƒZƒbƒgƒAƒbƒv
+	// ç§»å‹•ã®ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 	PlayerInputComponent->BindAxis("MoveForward/Backward", this, &ACPP_Player_Base::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight/Left", this, &ACPP_Player_Base::MoveRight);
 
-	// ‹“_•ÏX‚ÌƒZƒbƒgƒAƒbƒv
+	// è¦–ç‚¹å¤‰æ›´ã®ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 	PlayerInputComponent->BindAxis("Turn", this, &ACPP_Player_Base::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &ACPP_Player_Base::AddControllerPitchInput);
 
-	// ƒWƒƒƒ“ƒv‚ÌƒZƒbƒgƒAƒbƒv
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã®ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACPP_Player_Base::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACPP_Player_Base::StopJump);
 }
 
-// ³–Ê^Œã•û‚Ö‚ÌˆÚ“®
 void ACPP_Player_Base::MoveForward(float Value)
 {
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
 	AddMovementInput(Direction, Value);
 }
 
-// ¶‰E‚Ö‚ÌˆÚ“®
 void ACPP_Player_Base::MoveRight(float Value)
 {
 	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
 	AddMovementInput(Direction, Value);
 }
 
-// ƒL[‚ª‰Ÿ‚³‚ê‚½‚ÉƒWƒƒƒ“ƒvƒtƒ‰ƒO‚ğƒZƒbƒg
 void ACPP_Player_Base::StartJump()
 {
 	bPressedJump = true;
 }
 
-// ƒL[‚ª—£‚³‚ê‚½‚ÉƒWƒƒƒ“ƒvƒtƒ‰ƒO‚ğƒNƒŠƒA
 void ACPP_Player_Base::StopJump()
 {
 	bPressedJump = false;

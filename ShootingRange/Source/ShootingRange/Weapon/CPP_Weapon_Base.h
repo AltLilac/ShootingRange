@@ -10,8 +10,8 @@ UCLASS()
 class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ACPP_Weapon_Base();
 
@@ -19,70 +19,59 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// ’e‘q‚ÌƒTƒCƒY
+	// ãƒã‚¬ã‚¸ãƒ³ã‚µã‚¤ã‚º
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	int32 MagazineSize;
 
-	// ’e‘q‚Ì”
+	// ãƒã‚¬ã‚¸ãƒ³ã®æ•°
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	int32 MagazineNum;
 
-	// Å‘å’e”
+	// æœ€å¤§å¼¾æ•°
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "WeaponInfo")
 	int32 MaxAmmo;
 
-	// Œ»İ‚Ì’e‘q“à‚Ì’e”
+	// ç¾åœ¨ã®ãƒã‚¬ã‚¸ãƒ³å†…ã®å¼¾æ•°
 	int32 CurrentAmmo;
 
-	// Ë’ö‹——£
+	// å°„ç¨‹è·é›¢
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	float BulletDistance;
 
-	// ”­–C‰¹
+	// ç™ºç ²éŸ³
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
-	UAudioComponent* FireSound;
+	USoundBase* FireSound;
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“
-	UENUM(BlueprintType)
-	enum class EShowDebugLine : uint8
-	{
-		Enabled,
-		Disabled
-	};
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
-	EShowDebugLine ShowDebugLine;
-
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚ÌF
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã®è‰²
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
 	FLinearColor LineColor;
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚ÌŒp‘±ŠÔ
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã‚’æç”»ã™ã‚‹æ™‚é–“
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
 	float Duration;
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚ÌŒú‚³
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã®åšã•
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
 	float Thickness;
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚ÌŠJnÀ•W
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã®é–‹å§‹åœ°ç‚¹
 	FVector StartLocation;
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚ÌI—¹À•W
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã®çµ‚äº†åœ°ç‚¹
 	FVector EndLocation;
 
-	// ƒqƒbƒg‚µ‚½ƒIƒuƒWƒFƒNƒg
+	// å¼¾ã®ç€å¼¾çµæœ
 	FHitResult FireHitResult;
 
-	// ƒqƒbƒgƒp[ƒeƒBƒNƒ‹
+	// ç€å¼¾ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particles")
-	UParticleSystemComponent* HitEffect;
+	UParticleSystem* HitEffect;
 
-	// ƒqƒbƒg‰¹
+	// ç€å¼¾éŸ³
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
-	UAudioComponent* HitSound;
-	
-public:	
+	USoundBase* HitSound;
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -95,22 +84,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	void CalculateMaxAmmo();
-	
+
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
-	// ƒCƒ“ƒ^[ƒtƒF[ƒX‚ğ C++ ƒx[ƒXƒNƒ‰ƒX‚Å‚ ‚é’ö“x’è‹`‚·‚×‚«‚©H
-	/*
-		# Interact
-			* ƒCƒ“ƒ^ƒ‰ƒNƒg‰Â”\‚ÈƒAƒCƒeƒ€‚âƒIƒuƒWƒFƒNƒg‚Éİ’è‚µ‚½ƒRƒŠƒWƒ‡ƒ“‚ÉƒvƒŒƒCƒ„[‚ªƒI[ƒo[ƒ‰ƒbƒv‚µ‚½‚ç
-			  ƒvƒŒƒCƒ„[ƒNƒ‰ƒX‚É’Ê’m‚ğs‚¢AƒCƒ“ƒ^ƒ‰ƒNƒg‰Â”\‚È|‚ğ¦‚· UI ‚ğ•\¦‚·‚é
-			  (E ƒL[‚Å››‚ğæ“¾)
-
-			## ‚Ç‚Ì‚æ‚¤‚É‚µ‚ÄƒvƒŒƒCƒ„[ƒNƒ‰ƒX‚É’Ê’m‚ğ‘—‚é‚©
-
-		# Attach
-			* ƒCƒ“ƒ^ƒ‰ƒNƒg‰Â”\‚È|‚ğ¦‚· UI ‚ª•\¦‚³‚ê‚Ä‚¢‚éó‘Ô‚Å
-			  ƒvƒŒƒCƒ„[ƒNƒ‰ƒX‚©‚çAƒCƒ“ƒ^ƒ‰ƒNƒgƒL[(E)‚Ì“ü—Í‚ğó‚¯æ‚Á‚½‚ç‚±‚ÌŠÖ”‚ğŒÄ‚Ño‚·
-
-			* “ü—Í‚ğó‚¯æ‚Á‚½‚çAƒvƒŒƒCƒ„[‚Ìè‚Ì’†‰›‚É•Ší‚ğƒZƒbƒg‚·‚é
-	*/
 };

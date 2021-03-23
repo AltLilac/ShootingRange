@@ -28,27 +28,27 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// ³–Ê^Œã•û‚Ö‚ÌˆÚ“®
+	// X æ–¹å‘ã®ç§»å‹•
 	UFUNCTION()
 	void MoveForward(float Value);
 
-	// ¶‰E‚Ö‚ÌˆÚ“®
+	// Y æ–¹å‘ã®ç§»å‹•
 	UFUNCTION()
 	void MoveRight(float Value);
 	
-	// ƒL[‚ª‰Ÿ‚³‚ê‚½‚ÉƒWƒƒƒ“ƒvƒtƒ‰ƒO‚ğƒZƒbƒg
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã®é–‹å§‹
 	UFUNCTION()
 	void StartJump();
 	
-	// ƒL[‚ª—£‚³‚ê‚½‚ÉƒWƒƒƒ“ƒvƒtƒ‰ƒO‚ğƒNƒŠƒA
+	// ã‚¸ãƒ£ãƒ³ãƒ—ã®çµ‚äº†
 	UFUNCTION()
 	void StopJump();
 
-	// ˆêlÌƒJƒƒ‰
+	// ä¸€äººç§°ã‚«ãƒ¡ãƒ©
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* FPSCameraComponent;
 
-	// ˆêlÌƒƒbƒVƒ…i˜rjA©g‚É‚Ì‚İŒ©‚¦‚é
+	// ä¸€äººç§°ãƒ¡ãƒƒã‚·ãƒ¥
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* FPSMesh;
 };

@@ -22,7 +22,7 @@ ACPP_Weapon_Base::ACPP_Weapon_Base()
 	, HitEffect	(nullptr)
 	, HitSound	(nullptr)
 
-	, ShowDebugLine	(EShowDebugLine::Enabled)
+	//, ShowDebugLine	(EShowDebugLine::Enabled)
 	, Duration		(1.0)
 	, Thickness		(1.0f)
 {
@@ -47,15 +47,15 @@ void ACPP_Weapon_Base::Tick(float DeltaTime)
 
 void ACPP_Weapon_Base::Reload()
 {
-	// ’e‚ğÁ”ï‚µ‚Ä‚¢‚½‚ç
+	// ãƒã‚¬ã‚¸ãƒ³å†…ã®å¼¾ãŒæ¸›ã£ã¦ã„ãŸã‚‰
 	if (CurrentAmmo != MagazineSize)
 	{
 		int32 TempCurrentAmmo = CurrentAmmo;
 		
-		// ƒ}ƒKƒWƒ“•â[
+		// ãƒã‚¬ã‚¸ãƒ³ã®è£œçµ¦
 		CurrentAmmo = MagazineSize > (CurrentAmmo + MaxAmmo) ? (CurrentAmmo + MaxAmmo) : MagazineSize;
 		
-		// —\”õ’e”
+		// äºˆå‚™å¼¾æ•°ã‚’æ›´æ–°
 		MaxAmmo = 0 >= (MaxAmmo - (MagazineSize - TempCurrentAmmo)) ? 0 : (MaxAmmo - (MagazineSize - TempCurrentAmmo));
 	}
 	else
@@ -66,7 +66,7 @@ void ACPP_Weapon_Base::Reload()
 
 void ACPP_Weapon_Base::Fire_Implementation()
 {
-	// ’e‚ÌŒ¸­
+	// ãƒã‚¬ã‚¸ãƒ³å†…ã«å¼¾ãŒæ®‹ã£ã¦ã„ãŸã‚‰
 	if (CurrentAmmo > 0)
 	{
 		CurrentAmmo--;
@@ -76,14 +76,14 @@ void ACPP_Weapon_Base::Fire_Implementation()
 		return;
 	}
 
-	// ”­–C‰¹Ä¶
+	// ç™ºç ²éŸ³
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
 	}
 
-	// ƒfƒoƒbƒOƒ‰ƒCƒ“‚Ì•`‰æ
-	if (ShowDebugLine == EShowDebugLine::Enabled)
+	// ãƒ‡ãƒãƒƒã‚°ãƒ©ã‚¤ãƒ³ã®æç”» ShowDebugLine == EShowDebugLine::Enabled
+	if (true)
 	{
 		StartLocation = GetActorLocation() + GetActorScale().Y;
 		EndLocation	= StartLocation + (GetActorLocation() * BulletDistance);
@@ -92,7 +92,7 @@ void ACPP_Weapon_Base::Fire_Implementation()
 		UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, Duration, Thickness);
 	}
 
-	// ƒ‰ƒCƒ“ƒgƒŒ[ƒX
+	// ãƒ©ã‚¤ãƒ³ãƒˆãƒ¬ãƒ¼ã‚¹
 	{
 		FCollisionQueryParams CollisionQueryParams;
 		
@@ -101,7 +101,7 @@ void ACPP_Weapon_Base::Fire_Implementation()
 
 		GetWorld()->LineTraceSingleByChannel(FireHitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, CollisionQueryParams);
 
-		// ƒqƒbƒgˆ—
+		// ç€å¼¾ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 		if (FireHitResult.bBlockingHit && HitEffect && HitSound)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, EndLocation);
@@ -110,13 +110,13 @@ void ACPP_Weapon_Base::Fire_Implementation()
 	}
 }
 
-/*--- ƒGƒfƒBƒ^ã‚Å‚ÌƒvƒƒpƒeƒB•ÏX‚ğ”½‰f‚³‚¹‚é ---*/
+/*--- ã‚¨ãƒ‡ã‚£ã‚¿ä¸Šã§ã®æ›´æ–°ã‚’åæ˜ ã•ã›ã‚‹ ---*/
 void ACPP_Weapon_Base::CalculateMaxAmmo()
 {
 	MaxAmmo = MagazineSize * MagazineNum;
 }
 
-#if WITH_EDITER
+#if WITH_EDITOR
 void ACPP_Weapon_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);

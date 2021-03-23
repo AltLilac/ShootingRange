@@ -9,10 +9,8 @@ void AShootingRangeGameModeBase::StartPlay()
 
 	check(GEngine != nullptr);
 
-	// ƒL[‚ª -1 ‚Ìê‡Aã‘‚«‚³‚ê‚¸‚Éí‚ÉV‚µ‚¢ƒƒbƒZ[ƒW‚Æ‚µ‚Ä•\Ž¦‚³‚ê‚é
 	const int32 AlwaysAddKey = -1;
 
-	// Viewport ã‚ÉƒƒbƒZ[ƒW‚ð•\Ž¦‚·‚é
-	// ƒL[, •\Ž¦ŽžŠÔ, •¶ŽšF, •\Ž¦•¶Žš
+	// ã“ã®ã‚²ãƒ¼ãƒ ãƒ¢ãƒ¼ãƒ‰ãŒãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸã‚‰ã€ä¸‹è¨˜ãƒ†ã‚­ã‚¹ãƒˆã‚’ã‚¨ãƒ‡ã‚£ã‚¿ä¸Šã«å‡ºåŠ›
 	GEngine->AddOnScreenDebugMessage(AlwaysAddKey, 5.0f, FColor::Yellow, TEXT("Hello World, This is ShootingRangeGameMode!"));
 }
