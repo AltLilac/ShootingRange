@@ -6,10 +6,11 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "ShootingRange/Player/Interface/CPP_Interact.h"
 #include "CPP_Player_Base.generated.h"
 
 UCLASS()
-class SHOOTINGRANGE_API ACPP_Player_Base : public ACharacter
+class SHOOTINGRANGE_API ACPP_Player_Base : public ACharacter, public ICPP_Interact
 {
 	GENERATED_BODY()
 
@@ -43,6 +44,10 @@ public:
 	// ジャンプの終了
 	UFUNCTION()
 	void StopJump();
+
+	// インタラクトの開始
+	UFUNCTION()
+	void BeginInteract();
 
 	// 一人称カメラ
 	UPROPERTY(VisibleAnywhere)

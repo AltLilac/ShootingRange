@@ -23,7 +23,7 @@ class SHOOTINGRANGE_API ICPP_Interact
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	// アイテムやオブジェクトのインタラクト
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponBase")
 	void Interact();
 	virtual void Interact_Implementation();
 };

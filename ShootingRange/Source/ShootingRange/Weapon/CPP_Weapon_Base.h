@@ -4,10 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CPP_DebugFireLineTraceEnum.h"
+#include "ShootingRange/Player/Interface/CPP_Interact.h"
 #include "CPP_Weapon_Base.generated.h"
 
+/*
+	TODO:
+	・ベースクラスでどこまで Attach と Interact を定義するか
+	
+	Interact
+	・まず、オブジェクトのインタラクトイベントトリガー用に設定したコリジョンにプレイヤーがオーバーラップしたら
+	インタラクト可能な旨を示す UI を表示
+*/
+
 UCLASS()
-class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor
+class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor, public ICPP_Interact
 {
 	GENERATED_BODY()
 
@@ -42,6 +53,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
 	USoundBase* FireSound;
 
+	// デバッグラインの切り替え
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
+	EShowDebugLine ShowDebugLine;
+
 	// デバッグラインの色
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DebugSettings")
 	FLinearColor LineColor;
@@ -75,15 +90,23 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// 銃のリロード
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void Reload();
 
+	// 射撃
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "WeaponBase")
 	void Fire();
 	virtual void Fire_Implementation();
 
+	// アイテムのピックアップイベント（インタラクト）
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
+	void Interact_Implementation() override;
+
+	/*--- エディタ上での更新を反映させる ---*/
+	UFUNCTION(BlueprintCallable, Category = "WeaponBaseWithEditor")
 	void CalculateMaxAmmo();
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+	/* --------------------------------- */
 };

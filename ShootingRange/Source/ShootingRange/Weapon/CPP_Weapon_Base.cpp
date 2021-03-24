@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Engine.h"
 
 // Sets default values
 ACPP_Weapon_Base::ACPP_Weapon_Base()
@@ -22,7 +23,7 @@ ACPP_Weapon_Base::ACPP_Weapon_Base()
 	, HitEffect	(nullptr)
 	, HitSound	(nullptr)
 
-	//, ShowDebugLine	(EShowDebugLine::Enabled)
+	, ShowDebugLine	(EShowDebugLine::Enabled)
 	, Duration		(1.0)
 	, Thickness		(1.0f)
 {
@@ -45,6 +46,7 @@ void ACPP_Weapon_Base::Tick(float DeltaTime)
 
 }
 
+// 銃のリロード
 void ACPP_Weapon_Base::Reload()
 {
 	// マガジン内の弾が減っていたら
@@ -64,6 +66,7 @@ void ACPP_Weapon_Base::Reload()
 	}
 }
 
+// 射撃
 void ACPP_Weapon_Base::Fire_Implementation()
 {
 	// マガジン内に弾が残っていたら
@@ -82,13 +85,17 @@ void ACPP_Weapon_Base::Fire_Implementation()
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), FireSound, GetActorLocation());
 	}
 
-	// デバッグラインの描画 ShowDebugLine == EShowDebugLine::Enabled
-	if (true)
+	// デバッグラインの描画
+	if (ShowDebugLine == EShowDebugLine::Enabled)
 	{
+		// 開始地点を取得
 		StartLocation = GetActorLocation() + GetActorScale().Y;
+		// 終了地点を取得
 		EndLocation	= StartLocation + (GetActorLocation() * BulletDistance);
+		// ライン色の指定
 		LineColor = FLinearColor(255.0, 0.0, 0.0, 0.0);
 
+		// ラインの描画
 		UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, LineColor, Duration, Thickness);
 	}
 
@@ -96,9 +103,10 @@ void ACPP_Weapon_Base::Fire_Implementation()
 	{
 		FCollisionQueryParams CollisionQueryParams;
 		
-		CollisionQueryParams.bFindInitialOverlaps = false;
+		// 自身を無視する（銃本体）
 		CollisionQueryParams.AddIgnoredActor(this);
 
+		// トレースするライン
 		GetWorld()->LineTraceSingleByChannel(FireHitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, CollisionQueryParams);
 
 		// 着弾エフェクト
@@ -108,6 +116,16 @@ void ACPP_Weapon_Base::Fire_Implementation()
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, EndLocation);
 		}
 	}
+}
+
+// アイテムのピックアップイベント（インタラクト）
+void ACPP_Weapon_Base::Interact_Implementation()
+{
+	ICPP_Interact::Interact_Implementation();
+
+	check(GEngine != nullptr)
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Called WeaponBase interact interface!!"));
 }
 
 /*--- エディタ上での更新を反映させる ---*/
@@ -123,6 +141,5 @@ void ACPP_Weapon_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 
 	CalculateMaxAmmo();
 }
-#endif // WITH_EDITER
-
-/* ------------------------------------------ */
+#endif // WITH_EDITOR
+/* --------------------------------- */

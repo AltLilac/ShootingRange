@@ -2,6 +2,8 @@
 
 
 #include "CPP_Player_Base.h"
+#include "ShootingRange/Weapon/CPP_Weapon_Base.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine.h"
 
 // Sets default values
@@ -74,6 +76,8 @@ void ACPP_Player_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// プレイヤーアクションのセットアップ
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACPP_Player_Base::StartJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACPP_Player_Base::StopJump);
+
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACPP_Player_Base::BeginInteract);
 }
 
 void ACPP_Player_Base::MoveForward(float Value)
@@ -96,4 +100,18 @@ void ACPP_Player_Base::StartJump()
 void ACPP_Player_Base::StopJump()
 {
 	bPressedJump = false;
+}
+
+void ACPP_Player_Base::BeginInteract()
+{
+	TArray<AActor*> OutActors;
+
+	// インターフェース取得
+	UGameplayStatics::GetAllActorsWithInterface(this->GetWorld(), UCPP_Interact::StaticClass(), OutActors);
+
+	// インターフェースを持っている対象全ての実行を行う
+	for (AActor* Actor : OutActors)
+	{
+		ICPP_Interact::Execute_Interact(Actor);
+	}
 }
