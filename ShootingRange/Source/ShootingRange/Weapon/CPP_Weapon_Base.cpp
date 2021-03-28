@@ -26,7 +26,7 @@ ACPP_Weapon_Base::ACPP_Weapon_Base()
 	, HitEffect		(nullptr)
 	, HitSound		(nullptr)
 
-	, ShowDebugLine	(EShowDebugLine::Enabled)
+	, ShowDebugLine	(EShowDebugLine::Enable)
 	, Duration		(1.0)
 	, Thickness		(1.0f)
 {
@@ -106,7 +106,7 @@ void ACPP_Weapon_Base::Fire_Implementation()
 		}
 
 		// デバッグラインの描画
-		if (ShowDebugLine == EShowDebugLine::Enabled)
+		if (ShowDebugLine == EShowDebugLine::Enable)
 		{
 			// ライン色の指定
 			LineColor = FLinearColor(255.0, 0.0, 0.0, 0.0);
@@ -158,7 +158,7 @@ void ACPP_Weapon_Base::OnOverlapBeginInteract
 	if (OtherActor && (OtherActor != this) && (OtherActor == UGameplayStatics::GetActorOfClass(this->GetWorld(), FindClass)) && OtherComp)
 	{
 		// イベントの状態を変更
-		ManageInteractState = EManageInteractState::Weapon;
+		ManageInteractState = EManageInteractState::InCollision;
 
 		check(GEngine != nullptr)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Can interact on weapon!!"));

@@ -19,8 +19,6 @@ class SHOOTINGRANGE_API UCPP_ManageInteractStateEnum : public UUserDefinedEnum
 UENUM(BlueprintType)
 enum class EManageInteractState : uint8
 {
-	Weapon,
-	Grenade,
-	EventObject,
+	InCollision,
 	OutOfCollision
 };

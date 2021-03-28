@@ -19,6 +19,6 @@ class SHOOTINGRANGE_API UCPP_DebugFireLineTraceEnum : public UUserDefinedEnum
 UENUM(BlueprintType)
 enum class EShowDebugLine : uint8
 {
-	Enabled,
-	Disabled
+	Enable,
+	Disable
 };

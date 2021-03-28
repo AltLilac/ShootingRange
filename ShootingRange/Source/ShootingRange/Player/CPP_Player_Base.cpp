@@ -8,9 +8,6 @@
 /*
 	TODO:
 
-	・PlayerBase の BeginInteract が現状、全部のオブジェクトに対して一斉にインタラクトが行われるので
-	条件に応じて個別にインタラクトを実行した方がいい
-
 	・他にもインターフェースから実装していった方がいいアクションがあるので、
 	新しくプレイヤーインターフェースのクラスを作って、射撃、リロード、インタラクトなどを作る
 */
@@ -116,7 +113,7 @@ void ACPP_Player_Base::StopJump()
 void ACPP_Player_Base::BeginInteract()
 {
 	// 武器のインタラクトイベント用コリジョンにオーバーラップしていたら
-	if (ManageInteractState == EManageInteractState::Weapon)
+	if (ManageInteractState == EManageInteractState::InCollision)
 	{
 		check(GEngine != nullptr)
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("PlayerBase_Interact"));
