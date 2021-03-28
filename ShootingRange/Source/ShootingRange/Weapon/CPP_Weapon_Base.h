@@ -89,7 +89,7 @@ protected:
 
 	// 武器のメッシュ
 	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* WeaponMesh;
+	UStaticMeshComponent* WeaponMesh;
 
 public:
 	// Called every frame

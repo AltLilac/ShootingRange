@@ -4,6 +4,7 @@
 #include "CPP_Weapon_Base.h"
 #include "Engine/World.h"
 #include "Components/AudioComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -38,11 +39,11 @@ ACPP_Weapon_Base::ACPP_Weapon_Base()
 	RootComponent = DefaultSceneRoot;
 
 	InteractCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractCollision"));
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 
 	// コンポーネントのアタッチ
-	InteractCollision->SetupAttachment(RootComponent);
-	WeaponMesh->SetupAttachment(InteractCollision);
+	WeaponMesh->SetupAttachment(RootComponent);
+	InteractCollision->SetupAttachment(WeaponMesh);
 
 	// オーバーラップイベントを追加
 	InteractCollision->OnComponentBeginOverlap.AddDynamic(this, &ACPP_Weapon_Base::OnOverlapBeginInteract);
