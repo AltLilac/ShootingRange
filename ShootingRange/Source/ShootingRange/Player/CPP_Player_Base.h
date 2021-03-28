@@ -2,11 +2,12 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "ShootingRange/Player/Interface/CPP_Interact.h"
+#include "ShootingRange/Player/CPP_ManageInteractStateEnum.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "ShootingRange/Player/Interface/CPP_Interact.h"
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 #include "CPP_Player_Base.generated.h"
 
 UCLASS()
@@ -21,6 +22,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// 一人称カメラ
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* FPSCameraComponent;
+
+	// 一人称メッシュ
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	USkeletalMeshComponent* FPSMesh;
 
 public:	
 	// Called every frame
@@ -48,12 +57,4 @@ public:
 	// インタラクトの開始
 	UFUNCTION()
 	void BeginInteract();
-
-	// 一人称カメラ
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* FPSCameraComponent;
-
-	// 一人称メッシュ
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	USkeletalMeshComponent* FPSMesh;
 };

@@ -2,20 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "CPP_DebugFireLineTraceEnum.h"
 #include "ShootingRange/Player/Interface/CPP_Interact.h"
+#include "ShootingRange/Player/CPP_ManageInteractStateEnum.h"
+#include "Components/BoxComponent.h"
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include "CPP_Weapon_Base.generated.h"
-
-/*
-	TODO:
-	・ベースクラスでどこまで Attach と Interact を定義するか
-	
-	Interact
-	・まず、オブジェクトのインタラクトイベントトリガー用に設定したコリジョンにプレイヤーがオーバーラップしたら
-	インタラクト可能な旨を示す UI を表示
-*/
 
 UCLASS()
 class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor, public ICPP_Interact
@@ -86,6 +79,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
 	USoundBase* HitSound;
 
+	// ルートコンポーネント
+	UPROPERTY()
+	USceneComponent* DefaultSceneRoot;
+
+	// インタラクトイベント用のコリジョン
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* InteractCollision;
+
+	// 武器のメッシュ
+	UPROPERTY(VisibleAnywhere)
+	USkeletalMeshComponent* WeaponMesh;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -102,6 +107,25 @@ public:
 	// アイテムのピックアップイベント（インタラクト）
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	void Interact_Implementation() override;
+
+	// インタラクト用のオーバーラップイベント
+	// オーバーラップ開始
+	UFUNCTION()
+	void OnOverlapBeginInteract
+	(
+		UPrimitiveComponent*	OverlappedComponent,
+		AActor*					OtherActor,
+		UPrimitiveComponent*	OtherComp,
+		int32					OtherBodyIndex,
+		bool					bFromSweep,
+		const FHitResult&		SweepResult
+	);
+	// オーバーラップ終了
+	UFUNCTION()
+	void OnOverlapEndInteract
+	(
+		UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex
+	);
 
 	/*--- エディタ上での更新を反映させる ---*/
 	UFUNCTION(BlueprintCallable, Category = "WeaponBaseWithEditor")

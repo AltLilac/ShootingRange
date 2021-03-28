@@ -2,9 +2,20 @@
 
 
 #include "CPP_Player_Base.h"
-#include "ShootingRange/Weapon/CPP_Weapon_Base.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine.h"
+
+/*
+	TODO:
+
+	・PlayerBase の BeginInteract が現状、全部のオブジェクトに対して一斉にインタラクトが行われるので
+	条件に応じて個別にインタラクトを実行した方がいい
+
+	・他にもインターフェースから実装していった方がいいアクションがあるので、
+	新しくプレイヤーインターフェースのクラスを作って、射撃、リロード、インタラクトなどを作る
+*/
+
+extern EManageInteractState ManageInteractState;
 
 // Sets default values
 ACPP_Player_Base::ACPP_Player_Base()
@@ -104,14 +115,21 @@ void ACPP_Player_Base::StopJump()
 
 void ACPP_Player_Base::BeginInteract()
 {
-	TArray<AActor*> OutActors;
-
-	// インターフェース取得
-	UGameplayStatics::GetAllActorsWithInterface(this->GetWorld(), UCPP_Interact::StaticClass(), OutActors);
-
-	// インターフェースを持っている対象全ての実行を行う
-	for (AActor* Actor : OutActors)
+	// 武器のインタラクトイベント用コリジョンにオーバーラップしていたら
+	if (ManageInteractState == EManageInteractState::Weapon)
 	{
-		ICPP_Interact::Execute_Interact(Actor);
+		check(GEngine != nullptr)
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("PlayerBase_Interact"));
+
+		TArray<AActor*> OutActors;
+
+		// インターフェース取得
+		UGameplayStatics::GetAllActorsWithInterface(this->GetWorld(), UCPP_Interact::StaticClass(), OutActors);
+
+		// インターフェースを持っている対象全ての実行を行う
+		for (AActor* Actor : OutActors)
+		{
+			ICPP_Interact::Execute_Interact(Actor);
+		}
 	}
 }
