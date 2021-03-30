@@ -49,6 +49,9 @@ ACPP_Player_Base::ACPP_Player_Base()
 
 	// 全体メッシュを自身から見えないようにする
 	GetMesh()->SetOwnerNoSee(true);
+
+	// FPSMesh にタグを設定
+	FPSMesh->ComponentTags.Add(FName("PlayerMesh"));
 }
 
 // Called when the game starts or when spawned

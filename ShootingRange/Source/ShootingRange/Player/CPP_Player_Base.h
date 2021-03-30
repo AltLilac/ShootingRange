@@ -57,4 +57,8 @@ public:
 	// インタラクトの開始
 	UFUNCTION()
 	void BeginInteract();
+
+	// 一人称メッシュを取得
+	UFUNCTION(BlueprintCallable, Category = "PlayerBase")
+	USkeletalMeshComponent* GetFPSMesh() const { return FPSMesh; }
 };
