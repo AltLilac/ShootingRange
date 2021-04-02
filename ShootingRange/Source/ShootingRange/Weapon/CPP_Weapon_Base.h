@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CPP_DebugFireLineTraceEnum.h"
-#include "ShootingRange/Player/Interface/CPP_Interact.h"
+//#include "ShootingRange/Player/Interface/CPP_Player_Interfaces.h"
 #include "ShootingRange/Player/CPP_ManageInteractStateEnum.h"
 #include "Components/BoxComponent.h"
 #include "CoreMinimal.h"
@@ -11,7 +11,7 @@
 #include "CPP_Weapon_Base.generated.h"
 
 UCLASS()
-class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor, public ICPP_Interact
+class SHOOTINGRANGE_API ACPP_Weapon_Base : public AActor
 {
 	GENERATED_BODY()
 
@@ -23,6 +23,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+/* 武器の基本情報 */
+protected:
 	// マガジンサイズ
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	int32 MagazineSize;
@@ -42,6 +48,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponInfo")
 	float BulletDistance;
 
+/* 射撃処理 */
+protected:
 	// 発砲音
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
 	USoundBase* FireSound;
@@ -79,22 +87,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SoundEffects")
 	USoundBase* HitSound;
 
-	// ルートコンポーネント
-	UPROPERTY()
-	USceneComponent* DefaultSceneRoot;
-
-	// インタラクトイベント用のコリジョン
-	UPROPERTY(VisibleAnywhere)
-	UBoxComponent* InteractCollision;
-
-	// 武器のメッシュ
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* WeaponMesh;
-
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// 銃のリロード
 	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
 	virtual void Reload();
@@ -104,9 +97,33 @@ public:
 	void Fire();
 	virtual void Fire_Implementation();
 
+/* メッシュ */
+protected:
+	// ルートコンポーネント
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* DefaultSceneRoot;
+
+	// インタラクトイベント用のコリジョン
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UBoxComponent* InteractCollision;
+
+	// 武器のメッシュ
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* WeaponMesh;
+
+/* インタラクトイベント */
+protected:
+	// 武器を持っているか
+	bool bIsAttached;
+
+public:
 	// アイテムのピックアップイベント（インタラクト）
-	UFUNCTION(BlueprintCallable, Category = "WeaponBase")
-	void Interact_Implementation() override;
+	//UFUNCTION()
+	//void Interact() override;
+
+	// プレイヤーの一人称メッシュを取得
+	UFUNCTION()
+	USceneComponent* GetFirstPersonMesh() const;
 
 	// インタラクト用のオーバーラップイベント
 	// オーバーラップ開始
@@ -127,10 +144,12 @@ public:
 		UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex
 	);
 
-	/*--- エディタ上での更新を反映させる ---*/
+/* エディタ */
+public:
+	// 最大弾数計算
 	UFUNCTION(BlueprintCallable, Category = "WeaponBaseWithEditor")
 	void CalculateMaxAmmo();
 
+	// エディタの変更を検知して更新
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	/* --------------------------------- */
 };

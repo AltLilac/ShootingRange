@@ -23,13 +23,15 @@ ACPP_Weapon_Base::ACPP_Weapon_Base()
 
 	, BulletDistance(10000.0f)
 
+	, ShowDebugLine	(EShowDebugLine::Enable)
+	, Duration		(1.0)
+	, Thickness		(1.0f)
+
 	, FireSound		(nullptr)
 	, HitEffect		(nullptr)
 	, HitSound		(nullptr)
 
-	, ShowDebugLine	(EShowDebugLine::Enable)
-	, Duration		(1.0)
-	, Thickness		(1.0f)
+	, bIsAttached	(false)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -55,6 +57,8 @@ void ACPP_Weapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// 武器メッシュの物理シミュレーションを有効
+	WeaponMesh->SetSimulatePhysics(true);
 }
 
 // Called every frame
@@ -87,9 +91,12 @@ void ACPP_Weapon_Base::Reload()
 // 射撃
 void ACPP_Weapon_Base::Fire_Implementation()
 {
-	// マガジン内に弾が残っていたら
-	if (CurrentAmmo > 0)
+	// 武器を手に持っている状態で、マガジン内に弾が残っていたら
+	if (bIsAttached && CurrentAmmo > 0)
 	{
+		check(GEngine != nullptr)
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("Fire!!"));
+
 		CurrentAmmo--;
 
 		// 射線の開始地点と終了地点
@@ -129,6 +136,9 @@ void ACPP_Weapon_Base::Fire_Implementation()
 			// 着弾エフェクト
 			if (FireHitResult.bBlockingHit && HitEffect && HitSound)
 			{
+				check(GEngine != nullptr)
+				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Emerald, TEXT("Bullet hit!!"));
+
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, EndLocation);
 				UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, EndLocation);
 			}
@@ -185,13 +195,87 @@ void ACPP_Weapon_Base::OnOverlapEndInteract
 	}
 }
 
+// プレイヤーの一人称メッシュを取得
+USceneComponent* ACPP_Weapon_Base::GetFirstPersonMesh() const
+{
+	UWorld* World = GetWorld();
+	check(World != nullptr)
+
+	// 子孫のコンポーネントを全て取得
+	TArray<USceneComponent*> ChildrenArray;
+	UGameplayStatics::GetPlayerCharacter(World, 0)->GetRootComponent()->GetChildrenComponents(true, ChildrenArray);
+
+	USceneComponent* ReturnComponent = nullptr;
+
+	// アタッチしたいソケットの名前を所有しているコンポーネントを取得
+	for (USceneComponent* Child : ChildrenArray)
+	{
+		if (Child && Child->GetAttachSocketName() == FName("AttachWeaponSocket"))
+		{
+			ReturnComponent = Child;
+			break;
+		}
+	}
+
+	return ReturnComponent;
+}
+
+/*
 // アイテムのピックアップイベント（インタラクト）
-void ACPP_Weapon_Base::Interact_Implementation()
+void ACPP_Weapon_Base::Interact()
 {
 	check(GEngine != nullptr)
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Called WeaponBase interact interface!!"));
-}
 
+	// 武器を手に持っていなかったら
+	if (!bIsAttached)
+	{
+		{
+			// 武器の物理シミュレーションを無効
+			WeaponMesh->SetSimulatePhysics(false);
+
+			// 物理シミュレーションを有効にした際、切り離されてしまった親コンポーネントに対して再度アタッチ
+			WeaponMesh->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, true));
+
+			// プレイヤーの手に合うように相対回転を調整
+			FQuat NewQuat;
+			NewQuat.X = 90.0f;
+			NewQuat.Y = 83.0f;
+			NewQuat.Z = 90.0f;
+			WeaponMesh->SetRelativeRotation(NewQuat);
+		}
+
+		{
+			// プレイヤーの一人称メッシュにアタッチ、成功したら bIsAttached を true
+			bIsAttached = WeaponMesh->AttachToComponent(GetFirstPersonMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, EAttachmentRule::KeepWorld, true), FName("AttachWeaponSocket"));
+
+			// 成功を通知
+			if (bIsAttached)
+			{
+				check(GEngine != nullptr)
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Attach completed!!"));
+			}
+		}
+	}
+	// 武器を手に持っていたら
+	else
+	{
+		// 武器をデタッチ
+		WeaponMesh->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepRelative, true));
+
+		bIsAttached = false;
+
+		// 物理シミュレーションを有効
+		WeaponMesh->SetSimulatePhysics(true);
+
+		if (!bIsAttached)
+		{
+			check(GEngine != nullptr)
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Droped weapon!!"));
+		}
+	}
+}
+*/
 /*--- エディタ上での更新を反映させる ---*/
 void ACPP_Weapon_Base::CalculateMaxAmmo()
 {

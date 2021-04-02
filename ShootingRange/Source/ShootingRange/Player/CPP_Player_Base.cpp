@@ -115,21 +115,20 @@ void ACPP_Player_Base::StopJump()
 
 void ACPP_Player_Base::BeginInteract()
 {
+	
 	// 武器のインタラクトイベント用コリジョンにオーバーラップしていたら
-	if (ManageInteractState == EManageInteractState::InCollision)
-	{
-		check(GEngine != nullptr)
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("PlayerBase_Interact"));
+	//if (ManageInteractState == EManageInteractState::InCollision)
+	//{
+	//	TArray<AActor*> OutActors;
 
-		TArray<AActor*> OutActors;
-
-		// インターフェース取得
-		UGameplayStatics::GetAllActorsWithInterface(this->GetWorld(), UCPP_Interact::StaticClass(), OutActors);
+		// インターフェースを取得
+	//	UGameplayStatics::GetAllActorsWithInterface(this->GetWorld(), UCPP_Player_Interface::StaticClass(), OutActors);
 
 		// インターフェースを持っている対象全ての実行を行う
-		for (AActor* Actor : OutActors)
-		{
-			ICPP_Interact::Execute_Interact(Actor);
-		}
-	}
+	//	for (AActor* Actor : OutActors)
+	//	{
+			
+	//	}
+	//}
+	
 }

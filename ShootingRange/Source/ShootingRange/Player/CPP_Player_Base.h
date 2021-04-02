@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "ShootingRange/Player/Interface/CPP_Interact.h"
 #include "ShootingRange/Player/CPP_ManageInteractStateEnum.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -11,7 +10,7 @@
 #include "CPP_Player_Base.generated.h"
 
 UCLASS()
-class SHOOTINGRANGE_API ACPP_Player_Base : public ACharacter, public ICPP_Interact
+class SHOOTINGRANGE_API ACPP_Player_Base : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -57,8 +56,4 @@ public:
 	// インタラクトの開始
 	UFUNCTION()
 	void BeginInteract();
-
-	// 一人称メッシュを取得
-	UFUNCTION(BlueprintCallable, Category = "PlayerBase")
-	USkeletalMeshComponent* GetFPSMesh() const { return FPSMesh; }
 };
